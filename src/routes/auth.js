@@ -6,6 +6,24 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { pool } = require("../db");
 
+// POST /auth/register — สมัครสมาชิก (ไม่ต้องมี token)
+router.post("/register", async (req, res) => {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+        return res.status(400).json({ message: "กรุณากรอกข้อมูลให้ครบ" });
+    }
+    try {
+        const hashed = bcrypt.hashSync(password, 10);
+        const [result] = await pool.execute(
+            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+            [name, email, hashed]
+        );
+        res.status(201).json({ id: result.insertId, name, email });
+    } catch (err) {
+        res.status(400).json({ message: "อีเมลนี้มีอยู่แล้ว" });
+    }
+});
+
 // POST /auth/login
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
