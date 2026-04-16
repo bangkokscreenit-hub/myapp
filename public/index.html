@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>My Node.js App</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        h1 { color: #333; }
+        button { padding: 8px 16px; margin: 4px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+        button.del { background: #dc3545; }
+        pre { background: #f4f4f4; padding: 16px; border-radius: 4px; overflow: auto; }
+        input { padding: 8px; margin: 4px; border: 1px solid #ccc; border-radius: 4px; width: 200px; }
+    </style>
+</head>
+<body>
+    <h1>My Node.js App++++</h1>
+
+    <h2>Users</h2>
+    <button onclick="getUsers()">ดู Users ทั้งหมด</button>
+
+    <h3>เพิ่ม User ใหม่</h3>
+    <input id="name" placeholder="ชื่อ" />
+    <input id="email" placeholder="อีเมล" />
+    <input id="password" placeholder="รหัสผ่าน" />
+    <button onclick="addUser()">เพิ่ม User</button>
+
+    <h2>Posts</h2>
+    <button onclick="getPosts()">ดู Posts ทั้งหมด</button>
+
+    <h3>สร้าง Post ใหม่</h3>
+    <input id="title" placeholder="หัวข้อ" />
+    <input id="content" placeholder="เนื้อหา" />
+    <input id="userId" placeholder="userId" />
+    <button onclick="addPost()">สร้าง Post</button>
+
+    <h2>ผลลัพธ์</h2>
+    <pre id="result">กดปุ่มเพื่อดูข้อมูล...</pre>
+
+    <script>
+        const show = (data) => {
+            document.getElementById("result").textContent = JSON.stringify(data, null, 2);
+        };
+
+        const getUsers = async () => {
+            const res = await fetch("/users");
+            const data = await res.json();
+            show(data);
+        };
+
+        const addUser = async () => {
+            const res = await fetch("/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: document.getElementById("name").value,
+                    email: document.getElementById("email").value,
+                    password: document.getElementById("password").value,
+                })
+            });
+            const data = await res.json();
+            show(data);
+        };
+
+        const getPosts = async () => {
+            const res = await fetch("/posts");
+            const data = await res.json();
+            show(data);
+        };
+
+        const addPost = async () => {
+            const res = await fetch("/posts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: document.getElementById("title").value,
+                    content: document.getElementById("content").value,
+                    userId: Number(document.getElementById("userId").value),
+                })
+            });
+            const data = await res.json();
+            show(data);
+        };
+    </script>
+</body>
+</html>
